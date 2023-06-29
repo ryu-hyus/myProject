@@ -1,11 +1,55 @@
-from django.http import JsonResponse
-from django.shortcuts import render
+import json
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render
 from django.views import View
 from myApp.models import Member
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
-
+@method_decorator(csrf_exempt, name="dispatch")
 class PersonView(View):
+    #조회
+    def get(self, request, pk=None):
+        #단건조회
+        if pk is not None:
 
-    def get(self, request):
-        people = Member.objects.all()
-        return JsonResponse({"data": list(people.values())})
+            member = Member.objects.filter(id=pk).values().first()
+
+            if not member:
+                return JsonResponse({"error": "Person not found"}, status=404)
+            return JsonResponse(member)
+        # 다건조회
+        else:
+            members = Member.objects.all().values()
+            return JsonResponse(list(members) , safe=False)
+    
+    # 수정
+    def put(self, request, pk):
+        person = get_object_or_404(Member, pk=pk)
+        data = json.loads(request.body)
+
+        person.age = data.get("age") or person.age
+        person.firstname = data.get("firstname") or person.first_name
+        person.lastname = data.get("lastname") or person.last_name
+
+        person.save()
+        return JsonResponse(data)
+
+
+    # 삭제
+    def delete(self, request, pk):
+        person = get_object_or_404(Member, pk=pk)
+        person.delete()
+        return HttpResponse(status=200)
+
+    # 등록
+    def post(self, request):
+        data = json.loads(request.body)
+
+        p = Member(
+            firstname=data.get("firstname"),
+            lastname=data.get("lastname"),
+            age=data.get("age"),
+        )
+        p.save()
+        return HttpResponse(status=200)
