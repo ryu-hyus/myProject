@@ -68,11 +68,14 @@ class HelloTemplateView(TemplateView):
         return context
 
 class MemberTemplateView(TemplateView):
-    template_name = "hello.html"
+    template_name = "member.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["member_name"] = Member.firstname
+        context["my_name"] = "류현승"
+
+        member = Member.objects.filter(id =3).values().first()
+        context["member"] = member
         
         return context
