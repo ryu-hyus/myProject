@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <title>Hello jQuery</title>
+</head>
+<body>
+    <h1>Hello jQuery</h1>
+    <section>
+        <div>
+            <ul>
+                <li id = "div1">1</li>
+                <li id = "div2">2</li>
+                <li id = "div3">3</li>
+                <li>4</li>
+                <li>5</li>
+            </ul>
+        </div>
+        <div>
+            <button id = "btn_hide">야! 숨겨</button>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function(){
+            $('#btn_hide').click(function(){
+                $("ul li:first-child").remove()
+            })
+            $("li").click(function(){
+                $(this).hide()
+            })
+            $("button").click(function(){
+                $("#div1").fadeIn();
+                $("#div2").fadeIn("slow");
+                $("#div3").fadeIn(3000);
+            });
+        });
+
+    </script>
+</body>
+</html>

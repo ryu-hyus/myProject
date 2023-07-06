@@ -79,3 +79,9 @@ class MemberTemplateView(TemplateView):
         context["member"] = member
         
         return context
+    
+class JqueryTemplateView(TemplateView):
+    template_name = "jquery_study.html"
+    
+class MemberListTemplateView(TemplateView):
+    template_name = "member_list.html"
