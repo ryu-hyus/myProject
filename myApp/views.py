@@ -1,10 +1,13 @@
 import json
+from typing import Any, Dict
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 from myApp.models import Member
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+
 
 @method_decorator(csrf_exempt, name="dispatch")
 class PersonView(View):
@@ -53,3 +56,23 @@ class PersonView(View):
         )
         p.save()
         return HttpResponse(status=200)
+    
+class HelloTemplateView(TemplateView):
+    template_name = "hello.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["my_name"] = "류현승"
+
+        return context
+
+class MemberTemplateView(TemplateView):
+    template_name = "hello.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["member_name"] = Member.firstname
+        
+        return context
