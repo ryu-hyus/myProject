@@ -1,63 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
-    <title>Member List</title>
-  </head>
-  <body>
-    <script>
-      $(function () {
-        $.ajax({
-          url: 'http://127.0.0.1:8000/myapp/member/',
-          method: 'GET',
-          success: function (data) {
-            console.log(data)
-            $('#data_section').text(JSON.stringify(data))
-            
-            for (const member of data){
-                
-            }
 
-          }
-        })
-      })
-    </script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Member List</title>
+  {% include 'layout/head.html' %}
+</head>
 
-    <header>
-      <h1 class="text-center">멤버 목록 조회</h1>
-    </header>
-    <table class="table" id="data_table">
+<body>
+  {% include 'layout/header.html' %}
+
+  <header>
+    <h1 class="text-center">멤버 목록 조회</h1>
+  </header>
+  <section>
+    <table class="table table-hover" id="data_table">
       <thead>
         <tr>
           <th scope="col">ID</th>
-          <th scope="col">First name</th>
-          <th scope="col">Last name</th>
-          <th scope="col">Age</th>
+          <th scope="col">성</th>
+          <th scope="col">이름</th>
+          <th scope="col">나이</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td colspan="2">Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </tbody>
+      <tbody></tbody>
     </table>
-  </body>
+  </section>
+
+  <section>
+    <div class="mb-3">
+      <label class="form-label">성</label>
+      <input type="text" class="form-control" id="firstname" placeholder="성을 입력하세요" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">이름</label>
+      <input type="text" class="form-control" id="lastname" placeholder="이름을 입력하세요" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">나이</label>
+      <input type="number" class="form-control" id="age" placeholder="나이를 입력하세요" />
+    </div>
+    <button id="btn_save" class="btn btn-primary">저장</button>
+  </section>
+
+  {% include 'layout/footer.html' %}
+
+  <script>
+    $(function () {
+      function getMemberList(){
+      $.ajax({
+        url: 'http://localhost:8000/myapp/member/',
+        method: 'GET'
+      }).done(function (response) {
+        console.log(response)
+        const tr_array = response.map((member) =>
+          $(
+            `<tr onclick="location.href='/myapp/memberdetail/?member_id=${member.id}'">
+                  <td>${member.id}</td>
+                  <td>${member.firstname}</td>
+                  <td>${member.lastname}</td>
+                  <td>${member.age}</td>
+                </tr>`
+          )
+        )
+        $('#data_table > tbody').empty()
+        $('#data_table > tbody').append(tr_array)
+
+      })}
+      getMemberList();
+
+      $('#btn_save').click(function () {
+        alert('저장!')
+        const mem_firstname = $('#firstname').val()
+        const mem_lastname = $('#lastname').val()
+        const mem_age = $('#age').val()
+
+        $.ajax({
+          url: 'http://localhost:8000/myapp/member/',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            firstname: mem_firstname || null,
+            lastname: mem_lastname || null,
+            age: mem_age || null
+          })
+        })
+          .done(function (response) {
+            alert('저장성공')
+          })
+          .fail(function (response) {
+            alert('저장실패')
+          })
+          .always(function (response) {
+            console.log(response);
+            getMemberList();
+          })
+      })
+    })
+  </script>
+</body>
+
 </html>

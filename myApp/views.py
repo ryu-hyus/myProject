@@ -85,3 +85,6 @@ class JqueryTemplateView(TemplateView):
     
 class MemberListTemplateView(TemplateView):
     template_name = "member_list.html"
+
+class MemberDetailTemplateView(TemplateView):
+    template_name = "member_detail.html"
